@@ -1,0 +1,114 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized administrator user profile for managing appointments and hospital settings.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "description": "Admin email address" },
+        "displayName": { "type": "string", "description": "Admin full name" },
+        "role": { "type": "string", "enum": ["super_admin", "staff"], "description": "Role level" },
+        "createdAt": { "type": "string", "description": "Account creation timestamp" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Doctor": {
+      "title": "Doctor",
+      "description": "Eye specialist / doctor profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Doctor record ID" },
+        "name": { "type": "string", "description": "Doctor Name (e.g. Dr. S. Kumar)" },
+        "title": { "type": "string", "description": "Specialty (e.g. Eye Surgeon)" },
+        "qualifications": { "type": "string", "description": "Degree & credentials" },
+        "experience": { "type": "string", "description": "Years of experience" },
+        "roomNo": { "type": "string", "description": "OPD Room number" },
+        "photo": { "type": "string", "description": "Photo URL" },
+        "timings": { "type": "string", "description": "Working hours summary" },
+        "availableDays": { "type": "array", "description": "Active days of the week" },
+        "timeSlots": { "type": "array", "description": "Selectable time slots" },
+        "blockedDates": { "type": "array", "description": "Dates doctor is unavailable (YYYY-MM-DD)" },
+        "isAvailable": { "type": "boolean", "description": "Active status" }
+      },
+      "required": ["id", "name", "title", "qualifications", "isAvailable"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Patient booking record",
+      "type": "object",
+      "properties": {
+        "appointmentId": { "type": "string", "description": "Unique human readable ID (e.g. JJ-2026-X892)" },
+        "patientName": { "type": "string", "description": "Patient full name" },
+        "mobileNumber": { "type": "string", "description": "Registered contact number" },
+        "age": { "type": "string", "description": "Patient age" },
+        "gender": { "type": "string", "enum": ["Male", "Female", "Other"], "description": "Gender" },
+        "doctorId": { "type": "string", "description": "Selected Doctor ID" },
+        "doctorName": { "type": "string", "description": "Selected Doctor Name" },
+        "eyeProblem": { "type": "string", "description": "Eye issue description" },
+        "preferredDate": { "type": "string", "description": "Requested date (YYYY-MM-DD)" },
+        "preferredTime": { "type": "string", "description": "Requested time slot" },
+        "additionalMessage": { "type": "string", "description": "Patient notes" },
+        "status": { "type": "string", "enum": ["PENDING", "CONFIRMED", "REJECTED", "COMPLETED", "CANCELLED"], "description": "Current status" },
+        "confirmedDate": { "type": "string", "description": "Final date set by admin" },
+        "confirmedTime": { "type": "string", "description": "Final time set by admin" },
+        "adminNotes": { "type": "string", "description": "Internal notes added by admin" },
+        "rejectionReason": { "type": "string", "description": "Reason if rejected" },
+        "createdAt": { "type": "string", "description": "Submission ISO timestamp" },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" }
+      },
+      "required": ["appointmentId", "patientName", "mobileNumber", "age", "gender", "doctorId", "eyeProblem", "preferredDate", "preferredTime", "status"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Patient review and testimonial",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Review ID" },
+        "patientName": { "type": "string", "description": "Patient Name" },
+        "rating": { "type": "number", "description": "Rating 1 to 5 stars" },
+        "feedback": { "type": "string", "description": "Review message" },
+        "treatment": { "type": "string", "description": "Treatment received" },
+        "status": { "type": "string", "enum": ["approved", "pending"], "description": "Moderation status" },
+        "createdAt": { "type": "string", "description": "Timestamp" }
+      },
+      "required": ["id", "patientName", "rating", "feedback", "status"]
+    },
+    "HospitalSettings": {
+      "title": "HospitalSettings",
+      "description": "Global hospital contact and operational info",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "address": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "emergencyPhone": { "type": "string" },
+        "openingHours": { "type": "string" },
+        "announcement": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "admins/{adminId}": {
+      "schema": { "$ref": "#/entities/Admin" },
+      "description": "Admin user roles and permissions"
+    },
+    "doctors/{doctorId}": {
+      "schema": { "$ref": "#/entities/Doctor" },
+      "description": "Eye hospital doctors and schedule configurations"
+    },
+    "appointments/{appointmentId}": {
+      "schema": { "$ref": "#/entities/Appointment" },
+      "description": "Patient appointment bookings"
+    },
+    "reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/Review" },
+      "description": "Patient feedback and reviews"
+    },
+    "hospitalSettings/config": {
+      "schema": { "$ref": "#/entities/HospitalSettings" },
+      "description": "Hospital configuration document"
+    }
+  }
+}

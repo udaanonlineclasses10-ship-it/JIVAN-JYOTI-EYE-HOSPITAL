@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'udaanonlineclasses10@gmail.com'
+      );
+    }
+
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Admins Collection
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Doctors Collection - Public Read for patients to see doctor profiles and schedules
+    match /doctors/{doctorId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Appointments Collection
+    match /appointments/{appointmentId} {
+      // Patients can query/get individual appointments by ID/mobile, admins can list all
+      allow get: if true;
+      allow list: if true;
+      
+      // Patient create appointment rule: status must be PENDING
+      allow create: if request.resource.data.status == 'PENDING'
+        && request.resource.data.patientName is string
+        && request.resource.data.mobileNumber is string
+        && request.resource.data.appointmentId is string;
+
+      // Admin update and delete privileges
+      allow update, delete: if isAdmin();
+    }
+
+    // Reviews Collection
+    match /reviews/{reviewId} {
+      // Anyone can read approved reviews, admin can read all
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      
+      // Anyone can submit a review with initial status 'pending'
+      allow create: if request.resource.data.status == 'pending'
+        && request.resource.data.patientName is string
+        && request.resource.data.rating is number
+        && request.resource.data.feedback is string;
+
+      allow update, delete: if isAdmin();
+    }
+
+    // Hospital Settings
+    match /hospitalSettings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Jivan Jyoti Eye Hospital",
+  "description": "Official website and appointment booking portal for Jivan Jyoti Eye Hospital, Sheikhpura, Bihar. Expert eye surgeons Dr. S. Kumar & Dr. V. Kumar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
