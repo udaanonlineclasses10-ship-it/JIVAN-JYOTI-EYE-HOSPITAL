@@ -46,6 +46,9 @@ interface AdminDashboardProps {
   reviews: PatientReview[];
   onLogout: () => void;
   onClose: () => void;
+  onOpenSupabaseConfig?: () => void;
+  authProvider?: 'firebase' | 'supabase';
+  currentUserEmail?: string;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -53,7 +56,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   doctors,
   reviews,
   onLogout,
-  onClose
+  onClose,
+  onOpenSupabaseConfig,
+  authProvider = 'firebase',
+  currentUserEmail
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'appointments' | 'doctors' | 'reviews' | 'setup'>('overview');
   
@@ -231,6 +237,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border flex items-center gap-1.5 ${
+              authProvider === 'supabase'
+                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-700'
+                : 'bg-teal-950/60 text-teal-300 border-teal-700'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${authProvider === 'supabase' ? 'bg-emerald-400' : 'bg-teal-400'}`} />
+              <span>{authProvider === 'supabase' ? 'Supabase Auth' : 'Firebase Auth'}</span>
+            </span>
+            {currentUserEmail && (
+              <span className="text-xs text-slate-400 hidden md:inline-block font-mono">
+                {currentUserEmail}
+              </span>
+            )}
+          </div>
+
+          {onOpenSupabaseConfig && (
+            <button
+              onClick={onOpenSupabaseConfig}
+              className="px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:text-white bg-emerald-950/40 hover:bg-emerald-900/60 rounded-lg border border-emerald-800 transition-colors flex items-center gap-1.5"
+              title="Configure Supabase Project Settings"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Supabase Settings</span>
+            </button>
+          )}
+
           <button
             onClick={onLogout}
             className="px-3.5 py-2 text-xs font-semibold text-rose-300 hover:text-white bg-rose-950/40 hover:bg-rose-900/60 rounded-lg border border-rose-800 transition-colors flex items-center gap-1.5"

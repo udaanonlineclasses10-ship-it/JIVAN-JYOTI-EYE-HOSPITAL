@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, MessageSquarePlus, CheckCircle2, AlertCircle, Sparkles, X, User } from 'lucide-react';
+import { Star, MessageSquarePlus, CheckCircle2, AlertCircle, Sparkles, X, User, ThumbsUp } from 'lucide-react';
 import { PatientReview } from '../types';
 import { submitReview } from '../services/hospitalService';
 
@@ -28,7 +28,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
     setErrorMsg(null);
 
     if (!patientName.trim()) {
-      setErrorMsg('Please enter your name.');
+      setErrorMsg('Please enter your full name.');
       return;
     }
     if (!feedback.trim()) {
@@ -67,20 +67,20 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
           <div className="space-y-3 text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-100 border border-teal-200 text-teal-800 text-xs font-semibold">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span>Patient Testimonials & Reviews</span>
+              <span>Verified Patient Testimonials</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-heading tracking-tight">
-              What Our <span className="text-teal-600">Patients Say</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#091322] font-heading tracking-tight">
+              Patient Testimonials &amp; <span className="text-teal-600">Reviews</span>
             </h2>
             <p className="text-base text-slate-600 max-w-2xl">
-              Read verified patient experiences from cataract surgery, cornea clinic, and contact lens fits at Jivan Jyoti Eye Hospital Sheikhpura.
+              Real feedback from cataract surgery patients, corneal disease recoveries, and contact lens fittings at Jivan Jyoti Eye Hospital, Sheikhpura.
             </p>
           </div>
 
-          {/* Average Score & Action */}
-          <div className="flex items-center gap-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm shrink-0">
+          {/* Average Rating Block */}
+          <div className="flex items-center gap-6 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm shrink-0">
             <div className="text-center border-r border-slate-200 pr-6">
-              <span className="text-3xl font-black text-slate-900 font-heading block">{averageRating}</span>
+              <span className="text-3xl font-extrabold text-[#091322] font-heading block">{averageRating}</span>
               <div className="flex items-center gap-0.5 justify-center text-amber-400 my-1">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
@@ -91,7 +91,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
 
             <button
               onClick={() => setModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all"
+              className="inline-flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white font-bold text-xs rounded-xl shadow-sm transition-all cursor-pointer"
             >
               <MessageSquarePlus className="w-4 h-4" />
               <span>Write Patient Review</span>
@@ -104,10 +104,10 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
           {approvedReviews.map((rev) => (
             <div
               key={rev.id}
-              className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-4"
+              className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-4 hover:-translate-y-1"
             >
               <div className="space-y-3">
-                {/* Stars */}
+                {/* Stars and Treatment badge */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 text-amber-400">
                     {[...Array(rev.rating)].map((_, i) => (
@@ -125,11 +125,11 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs">
+                <div className="w-9 h-9 rounded-full bg-[#091322] text-teal-400 flex items-center justify-center font-bold text-xs">
                   {rev.patientName.charAt(0)}
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900">{rev.patientName}</h4>
+                  <h4 className="text-xs font-bold text-[#091322]">{rev.patientName}</h4>
                   <span className="text-[10px] text-slate-400 block">Verified Patient · Sheikhpura</span>
                 </div>
               </div>
@@ -137,19 +137,19 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
           ))}
         </div>
 
-        {/* Modal for Submitting Review */}
+        {/* Review Submission Modal */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm animate-fadeIn">
             <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
               
-              <div className="bg-teal-800 p-5 text-white flex items-center justify-between">
+              <div className="bg-[#091322] p-5 text-white flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
                   <h3 className="text-lg font-bold font-heading">Submit Patient Review</h3>
                 </div>
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="p-1 text-slate-300 hover:text-white"
+                  className="p-1 text-slate-300 hover:text-white cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -157,7 +157,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 {errorMsg && (
-                  <div className="p-3 bg-rose-50 text-rose-800 text-xs rounded-lg flex items-center gap-2">
+                  <div className="p-3 bg-rose-50 text-rose-800 text-xs rounded-xl flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                     <span>{errorMsg}</span>
                   </div>
@@ -166,22 +166,22 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
                 {successMsg ? (
                   <div className="p-6 text-center space-y-2">
                     <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
-                    <h4 className="text-base font-bold text-slate-900">Review Submitted!</h4>
+                    <h4 className="text-base font-bold text-[#091322]">Review Submitted Successfully!</h4>
                     <p className="text-xs text-slate-600">
-                      Thank you for your feedback. Your review has been sent to admin for moderation and will appear shortly.
+                      Thank you for sharing your experience. Your review has been saved to the database and will appear following administrative verification.
                     </p>
                   </div>
                 ) : (
                   <>
                     <div className="space-y-1">
-                      <label className="block text-xs font-bold text-slate-700">Your Full Name *</label>
+                      <label className="block text-xs font-bold text-slate-700">Patient Full Name *</label>
                       <input
                         type="text"
                         required
                         placeholder="e.g. Priyanshu Kumar"
                         value={patientName}
                         onChange={(e) => setPatientName(e.target.value)}
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium"
+                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium focus:ring-2 focus:ring-teal-500"
                       />
                     </div>
 
@@ -223,10 +223,10 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
                       <textarea
                         required
                         rows={3}
-                        placeholder="Describe your treatment experience, doctor consultation, and hospital facility..."
+                        placeholder="Describe your treatment experience, doctor consultation, and hospital hygiene..."
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium"
+                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium focus:ring-2 focus:ring-teal-500"
                       />
                     </div>
 
@@ -241,7 +241,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-lg shadow-sm"
+                        className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer"
                       >
                         {submitting ? 'Submitting...' : 'Submit Review'}
                       </button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, User, Phone, FileText, CheckCircle2, Eye, Printer, AlertCircle, X, ShieldCheck } from 'lucide-react';
+import { Calendar, Clock, User, Phone, FileText, CheckCircle2, Eye, AlertCircle, X, ShieldCheck, HeartPulse } from 'lucide-react';
 import { Doctor, Appointment } from '../types';
 import { createAppointment, HOSPITAL_DETAILS } from '../services/hospitalService';
 
@@ -58,12 +58,13 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       setError('Please enter patient full name.');
       return;
     }
-    if (!mobileNumber.trim() || mobileNumber.trim().length < 10) {
+    const cleanPhone = mobileNumber.trim().replace(/\D/g, '');
+    if (cleanPhone.length < 10) {
       setError('Please enter a valid 10-digit mobile number.');
       return;
     }
-    if (!age.trim() || isNaN(Number(age))) {
-      setError('Please enter a valid age in years.');
+    if (!age.trim() || isNaN(Number(age)) || Number(age) < 1 || Number(age) > 120) {
+      setError('Please enter a valid age between 1 and 120.');
       return;
     }
     if (!eyeProblem.trim()) {
@@ -74,7 +75,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     try {
       setLoading(true);
 
-      // Generate unique human-readable Appointment ID
+      // Generate unique human-readable Appointment ID (JJ-2026-XXXX)
       const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
       const year = new Date().getFullYear();
       const appointmentId = `JJ-${year}-${randomCode}`;
@@ -99,30 +100,30 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     } catch (err) {
       setLoading(false);
       console.error('Error creating appointment:', err);
-      setError('Failed to record appointment in database. Please check connection.');
+      setError('Failed to record appointment in database. Please check your network connection.');
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm overflow-y-auto animate-fadeIn">
       <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8">
         
-        {/* Modal Header */}
-        <div className="bg-gradient-to-r from-teal-700 to-sky-700 p-6 text-white flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-teal-200">
-              <Eye className="w-6 h-6 stroke-[2.5]" />
+        {/* Modal Header (Deep Navy Blue #091322) */}
+        <div className="bg-[#091322] p-6 text-white flex items-center justify-between border-b border-slate-800">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center shadow-xs">
+              <Eye className="w-6 h-6 stroke-[2.2]" />
             </div>
             <div>
-              <h2 className="text-xl font-bold font-heading">Book Online Appointment</h2>
-              <p className="text-xs text-teal-100">Jivan Jyoti Eye Hospital, Sheikhpura</p>
+              <h2 className="text-xl font-bold font-heading">Book Eye OPD Appointment</h2>
+              <p className="text-xs text-slate-300">Jivan Jyoti Eye Hospital · Sheikhpura, Bihar</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-            aria-label="Close"
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+            aria-label="Close modal"
           >
             <X className="w-6 h-6" />
           </button>
@@ -140,7 +141,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
-            {/* Patient Name */}
+            {/* Patient Full Name */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-slate-700">Patient Full Name *</label>
               <div className="relative">
@@ -151,7 +152,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   placeholder="e.g. Ramesh Chandra"
                   value={patientName}
                   onChange={(e) => setPatientName(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-medium"
+                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-medium transition-all"
                 />
               </div>
             </div>
@@ -167,23 +168,23 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   placeholder="10-digit mobile number"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-medium"
+                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-medium transition-all"
                 />
               </div>
             </div>
 
             {/* Age */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-700">Patient Age (Years) *</label>
+              <label className="block text-xs font-bold text-slate-700">Age (Years) *</label>
               <input
                 type="number"
                 required
                 min="1"
                 max="120"
-                placeholder="e.g. 45"
+                placeholder="e.g. 48"
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
-                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-medium"
+                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-medium transition-all"
               />
             </div>
 
@@ -193,7 +194,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value as any)}
-                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-medium"
+                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-semibold transition-all"
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -207,7 +208,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               <select
                 value={doctorId}
                 onChange={(e) => setDoctorId(e.target.value)}
-                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-semibold"
+                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-bold transition-all"
               >
                 {doctors.map((doc) => (
                   <option key={doc.id} value={doc.id}>
@@ -217,7 +218,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               </select>
             </div>
 
-            {/* Eye Problem / Concern */}
+            {/* Eye Problem / Medical Concern */}
             <div className="sm:col-span-2 space-y-1.5">
               <label className="block text-xs font-bold text-slate-700">Eye Problem / Medical Concern *</label>
               <div className="relative">
@@ -225,10 +226,10 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 <textarea
                   required
                   rows={2}
-                  placeholder="e.g. Blurry vision in right eye, cataract assessment, redness or itchiness..."
+                  placeholder="e.g. Blurry vision in right eye, cataract surgery consultation, watering, redness..."
                   value={eyeProblem}
                   onChange={(e) => setEyeProblem(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-medium"
+                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-medium transition-all"
                 />
               </div>
             </div>
@@ -244,7 +245,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   min={new Date().toISOString().split('T')[0]}
                   value={preferredDate}
                   onChange={(e) => setPreferredDate(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-medium"
+                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-medium transition-all"
                 />
               </div>
             </div>
@@ -257,7 +258,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 <select
                   value={preferredTime}
                   onChange={(e) => setPreferredTime(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-medium"
+                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-medium transition-all"
                 >
                   {timeSlots.map((slot) => (
                     <option key={slot} value={slot}>
@@ -273,18 +274,19 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               <label className="block text-xs font-bold text-slate-700">Additional Message (Optional)</label>
               <input
                 type="text"
-                placeholder="Any past eye surgery history or special assistance required..."
+                placeholder="Past surgery history, diabetes, blood pressure, or special wheelchair requirements..."
                 value={additionalMessage}
                 onChange={(e) => setAdditionalMessage(e.target.value)}
-                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all text-slate-900 font-medium"
+                className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-900 font-medium transition-all"
               />
             </div>
 
           </div>
 
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-[11px] flex items-center gap-2">
+          {/* Workflow Notice */}
+          <div className="p-3.5 bg-amber-50 border border-amber-200/80 rounded-xl text-amber-900 text-xs flex items-center gap-2.5">
             <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
-            <span>Note: Submitted booking will be marked PENDING. Hospital admin will assign final date/time and confirm.</span>
+            <span><strong>Booking Workflow:</strong> Your initial booking is marked <strong>PENDING</strong> in our database. The hospital admin will review schedule availability, assign your finalized slot, and confirm.</span>
           </div>
 
           {/* Form Submit */}
@@ -292,7 +294,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg"
+              className="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -300,7 +302,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 text-xs font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-lg shadow-sm transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-3 text-xs font-bold text-white bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 rounded-xl shadow-md transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
                 <>
